@@ -1,11 +1,16 @@
 import {
   BadRequestException,
+  Body,
   Controller,
   Get,
+  Header,
   HttpCode,
   HttpStatus,
+  NotFoundException,
+  Param,
   Post,
   Req,
+  Res,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
@@ -13,12 +18,18 @@ import { AppService } from './app.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { randomUUID } from 'node:crypto';
 import { diskStorage } from 'multer';
-import { extname } from 'node:path';
-import type { Request } from 'express';
+import path, { extname } from 'node:path';
+import type { Request, Response } from 'express';
+import { PrismaService } from './prisma.service';
+import { Readable } from 'node:stream';
+import fs from 'node:fs';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly appService: AppService,
+    private readonly prismaService: PrismaService,
+  ) {}
 
   @Post('video')
   @HttpCode(HttpStatus.CREATED)
@@ -55,9 +66,89 @@ export class AppController {
   )
   async uploadVideo(
     @Req() _req: Request,
+    @Body()
+    contentData: {
+      title: string;
+      description: string;
+    },
     @UploadedFiles()
-    files: { video?: Express.Multer.File[]; thumbnail?: Express.Multer.File[] },
-  ): Promise<string> {
-    return 'video upload';
+    files: {
+      video?: Express.Multer.File[];
+      thumbnail?: Express.Multer.File[];
+    },
+  ): Promise<any> {
+    const videoFile = files.video?.[0];
+    const thumbnailFile = files.thumbnail?.[0];
+
+    if (!videoFile || !thumbnailFile) {
+      throw new BadRequestException(
+        'Both video and thumbnail files are required.',
+      );
+    }
+
+    return await this.prismaService.video.create({
+      data: {
+        id: randomUUID(),
+        title: contentData.title,
+        description: contentData.description,
+        url: videoFile.path,
+        thumbnailUrl: thumbnailFile.path,
+        sizeInKb: videoFile.size,
+        duration: 100,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    });
+  }
+
+  @Get('stream/:videoId')
+  @Header('Content-type', 'video/mp4')
+  async streamVideo(
+    @Param('videoId') videoId: string,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<any> {
+    const video = await this.prismaService.video.findUnique({
+      where: {
+        id: videoId,
+      },
+    });
+
+    if (!video) {
+      throw new NotFoundException('Video not found');
+    }
+
+    const videoPath = path.join('.', video.url);
+    const fileSize = fs.statSync(videoPath).size;
+
+    const range = req.headers.range;
+
+    if (range) {
+      const parts = range.replace(/bytes/, '').split('-');
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+
+      const chunkSize = end - start + 1;
+      const file = fs.createReadStream(videoPath, { start, end });
+
+      res.writeHead(HttpStatus.PARTIAL_CONTENT, {
+        'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+        'Accept-Ranges': 'bytes',
+        'Content-Length': chunkSize,
+        'Content-Type': 'video/mp4',
+      });
+
+      return file.pipe(res);
+    }
+
+    return res.writeHead(HttpStatus.OK, {
+      'Content-Length': fileSize,
+      'Content-Type': 'video/mp4',
+    });
+  }
+
+  @Get()
+  getHello(): string {
+    return this.appService.getHello();
   }
 }
