@@ -86,7 +86,7 @@ export class AppController {
       );
     }
 
-    return await this.prismaService.video.create({
+    const create = await this.prismaService.video.create({
       data: {
         id: randomUUID(),
         title: contentData.title,
@@ -99,6 +99,9 @@ export class AppController {
         updatedAt: new Date(),
       },
     });
+
+    console.log(create);
+    return create;
   }
 
   @Get('stream/:videoId')
@@ -108,11 +111,14 @@ export class AppController {
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<any> {
+    console.log('Chegou aqui???');
+    console.log(videoId);
     const video = await this.prismaService.video.findUnique({
       where: {
         id: videoId,
       },
     });
+    console.log(video);
 
     if (!video) {
       throw new NotFoundException('Video not found');
@@ -124,7 +130,7 @@ export class AppController {
     const range = req.headers.range;
 
     if (range) {
-      const parts = range.replace(/bytes/, '').split('-');
+      const parts = range.replace(/bytes=/, '').split('-');
       const start = parseInt(parts[0], 10);
       const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
 
