@@ -50,7 +50,7 @@ export class MovieEntity extends BaseEntity {
     this.video = video;
   }
 
-  geVideo(): VideoEntity {
+  getVideo(): VideoEntity {
     return this.video;
   }
 

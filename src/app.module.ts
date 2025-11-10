@@ -3,8 +3,7 @@ import { ContentController } from './http/rest/controller/content.controller';
 import { PrismaService } from './persistence/prisma/prisma.service';
 import { ContentManagementService } from './core/service/content-management.service';
 import { MediaPlayerService } from './core/service/media-player.service';
-import { VideoDAOImpl } from './persistence/dao/video.dao';
-import { VideoDAO } from './core/dao/video.dao.interface';
+import { ContentRepository } from './persistence/repository/content.repository';
 
 @Module({
   imports: [],
@@ -13,10 +12,7 @@ import { VideoDAO } from './core/dao/video.dao.interface';
     PrismaService,
     ContentManagementService,
     MediaPlayerService,
-    {
-      provide: VideoDAO,
-      useClass: VideoDAOImpl,
-    },
+    ContentRepository,
   ],
 })
 export class AppModule {}
