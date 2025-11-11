@@ -18,7 +18,9 @@ export interface CreateContentData {
 export class ContentManagementService {
   constructor(private readonly contentRepository: ContentRepository) {}
 
-  async createContent(createContentData: CreateContentData) {
+  async createContent(
+    createContentData: CreateContentData,
+  ): Promise<ContentEntity> {
     const content = ContentEntity.createNew({
       title: createContentData.title,
       description: createContentData.description,
@@ -29,12 +31,13 @@ export class ContentManagementService {
           sizeInKb: createContentData.sizeInKb,
           duration: 100,
         }),
-        thumbanil: ThumbnailEntity.createNew({
+        thumbnail: ThumbnailEntity.createNew({
           url: createContentData.thumbnailUrl,
         }),
       }),
     });
 
+    console.log(content);
     await this.contentRepository.create(content);
     return content;
   }

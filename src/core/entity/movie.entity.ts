@@ -5,15 +5,16 @@ import { VideoEntity } from './video.entity';
 
 export interface MovieEntityProps extends BaseEntityProps {
   video: VideoEntity;
-  thumbanil?: ThumbnailEntity;
+  thumbnail?: ThumbnailEntity;
 }
 
 export class MovieEntity extends BaseEntity {
   private video: MovieEntityProps['video'];
-  private thumbnail?: MovieEntityProps['thumbanil'];
+  private thumbnail?: MovieEntityProps['thumbnail'];
 
   private constructor(data: MovieEntityProps) {
     super(data);
+    Object.assign(this, data);
   }
 
   static createNew(
@@ -54,8 +55,8 @@ export class MovieEntity extends BaseEntity {
     return this.video;
   }
 
-  addThumbnail(thumbanil: ThumbnailEntity): void {
-    this.thumbnail = thumbanil;
+  addThumbnail(thumbnail: ThumbnailEntity): void {
+    this.thumbnail = thumbnail;
   }
 
   getThumbnail(): ThumbnailEntity | undefined {

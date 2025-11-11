@@ -19,6 +19,7 @@ export class VideoEntity extends BaseEntity {
 
   private constructor(data: VideoEntityProps) {
     super(data);
+    Object.assign(this, data);
   }
 
   static createNew(data: NewVideoEntity, id = randomUUID()): VideoEntity {

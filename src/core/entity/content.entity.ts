@@ -24,6 +24,7 @@ export class ContentEntity extends BaseEntity {
 
   private constructor(data: ContentEntityProps) {
     super(data);
+    Object.assign(this, data);
   }
 
   static createNew(
