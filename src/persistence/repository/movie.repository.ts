@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { Content } from '../entity/content.entity';
 import { DefaultTypeOrmRepository } from '@src/infra/typeorm/repository/default-typeorm.repository';
+import { Movie } from '../entity/movie.entity';
 
 @Injectable()
-export class ContentRepository extends DefaultTypeOrmRepository<Content> {
+export class MovieRepository extends DefaultTypeOrmRepository<Movie> {
   constructor(@Inject(DataSource) readonly dataSource: DataSource) {
-    super(Content, dataSource);
+    super(Movie, dataSource);
   }
 }
