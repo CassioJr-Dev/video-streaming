@@ -34,5 +34,5 @@
     "strictNullChecks": true,
     "target": "es2023"
   },
-  "include": ["src/**/*", "test/**/*"]
+  "include": ["src/**/*", "test/**/*", "database/**/*"]
 }

@@ -2,9 +2,7 @@ import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '@src/app.module';
 import { ContentManagementService } from '@src/core/service/content-management.service';
-import { PrismaService } from '@src/persistence/prisma/prisma.service';
 import { VideoRepository } from '@src/persistence/repository/video.repository';
-import fs from 'node:fs';
 import request from 'supertest';
 
 describe('VideoController (e2e)', () => {
@@ -34,7 +32,7 @@ describe('VideoController (e2e)', () => {
   });
 
   afterEach(async () => {
-    await videoRepository.clear();
+    await videoRepository.deleteAll();
   });
 
   afterAll(async () => {
