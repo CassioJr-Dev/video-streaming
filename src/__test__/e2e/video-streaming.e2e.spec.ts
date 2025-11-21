@@ -5,8 +5,9 @@ import { ContentManagementService } from '@src/core/service/content-management.s
 import { ContentRepository } from '@src/persistence/repository/content.repository';
 import { MovieRepository } from '@src/persistence/repository/movie.repository';
 import { VideoRepository } from '@src/persistence/repository/video.repository';
-import fs from 'fs';
+import fs from 'node:fs';
 import request from 'supertest';
+import nock from 'nock';
 
 describe('ContentController (e2e)', () => {
   let module: TestingModule;
@@ -42,15 +43,54 @@ describe('ContentController (e2e)', () => {
     await videoRepository.deleteAll();
     await movieRepository.deleteAll();
     await contentRepository.deleteAll();
+    nock.cleanAll();
   });
 
   afterAll(async () => {
-    await module.close();
+    module.close();
     fs.rmSync('./uploads', { recursive: true, force: true });
   });
 
   describe('GET /stream/:videoId', () => {
     it('streams a video', async () => {
+      nock('https://api.themoviedb.org/3', {
+        encodedQueryParams: true,
+        reqheaders: {
+          Authorization: (): boolean => true,
+        },
+      })
+        .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+        .get(`/search/keyword`)
+        .query({
+          query: 'Test Video',
+          page: '1',
+        })
+        .reply(200, {
+          results: [
+            {
+              id: '1',
+            },
+          ],
+        });
+
+      nock('https://api.themoviedb.org/3', {
+        encodedQueryParams: true,
+        reqheaders: {
+          Authorization: (): boolean => true,
+        },
+      })
+        .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+        .get(`discover/movie`)
+        .query({
+          with_keywords: '1',
+        })
+        .reply(200, {
+          results: [
+            {
+              vote_average: 8.5,
+            },
+          ],
+        });
       const createdMovie = await contentManagementService.createMovie({
         title: 'Test Video',
         description: 'This is a test video',
