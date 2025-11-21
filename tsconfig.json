@@ -13,11 +13,12 @@
     "strictPropertyInitialization": false,
     "forceConsistentCasingInFileNames": true,
     "incremental": true,
-    "lib": ["es2023"],
+    "lib": ["es2020"],
     "module": "CommonJS",
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
+    "noImplicitThis": true,
     "noUnusedParameters": true,
     "outDir": "./dist",
     "paths": {
@@ -32,7 +33,7 @@
     "strictBindCallApply": true,
     "strictFunctionTypes": true,
     "strictNullChecks": true,
-    "target": "es2023"
+    "target": "es2020"
   },
   "include": ["src/**/*", "test/**/*", "database/**/*"]
 }

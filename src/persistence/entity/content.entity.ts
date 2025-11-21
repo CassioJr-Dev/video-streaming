@@ -23,5 +23,5 @@ export class Content extends DefaultEntity<Content> {
   @OneToOne(() => TvShow, (tvShow) => tvShow.content, {
     cascade: true,
   })
-  tvShow: TvShow;
+  tvShow?: TvShow;
 }

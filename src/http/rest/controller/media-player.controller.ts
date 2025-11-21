@@ -7,29 +7,26 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
-import { MediaPlayerService } from '@src/core/service/media-player.service';
-import path from 'node:path';
-import fs from 'node:fs';
-import type { Request, Response } from 'express';
 import { VideoNotFoundException } from '@src/core/exception/video-not-found.exception';
+import { MediaPlayerService } from '@src/core/service/media-player.service';
 
-@Controller()
+import { Request, Response } from 'express';
+import fs from 'node:fs';
+import path from 'node:path';
+
+@Controller('stream')
 export class MediaPlayerController {
   constructor(private readonly mediaPlayerService: MediaPlayerService) {}
 
-  @Get('stream/:videoId')
-  @Header('Content-type', 'video/mp4')
+  @Get(':videoId')
+  @Header('Content-Type', 'video/mp4')
   async streamVideo(
     @Param('videoId') videoId: string,
     @Req() req: Request,
     @Res() res: Response,
-  ): Promise<any> {
+  ) {
     try {
       const url = await this.mediaPlayerService.prepareStreaming(videoId);
-
-      if (!url) {
-        return res.sendStatus(HttpStatus.NOT_FOUND);
-      }
 
       const videoPath = path.join('.', url);
       const fileSize = fs.statSync(videoPath).size;
@@ -41,23 +38,24 @@ export class MediaPlayerController {
         const start = parseInt(parts[0], 10);
         const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
 
-        const chunkSize = end - start + 1;
+        const chunksize = end - start + 1;
         const file = fs.createReadStream(videoPath, { start, end });
 
         res.writeHead(HttpStatus.PARTIAL_CONTENT, {
           'Content-Range': `bytes ${start}-${end}/${fileSize}`,
           'Accept-Ranges': 'bytes',
-          'Content-Length': chunkSize,
+          'Content-Length': chunksize,
           'Content-Type': 'video/mp4',
         });
 
-        return file.pipe(res);
+        file.pipe(res);
+      } else {
+        res.writeHead(HttpStatus.OK, {
+          'Content-Length': fileSize,
+          'Content-Type': 'video/mp4',
+        });
+        fs.createReadStream(videoPath).pipe(res);
       }
-
-      return res.writeHead(HttpStatus.OK, {
-        'Content-Length': fileSize,
-        'Content-Type': 'video/mp4',
-      });
     } catch (error) {
       if (error instanceof VideoNotFoundException) {
         return res.status(HttpStatus.NOT_FOUND).send({
