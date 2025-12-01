@@ -14,7 +14,7 @@ import { randomUUID } from 'node:crypto';
 import { diskStorage } from 'multer';
 import { extname } from 'node:path';
 import type { Request } from 'express';
-import { ContentManagementService } from '@src/core/service/content-management.service';
+import { ContentManagementService } from '@contentModule/core/service/content-management.service';
 import { RestResponseInterceptor } from '../interceptor/rest-response.interceptor';
 import { CreateVideoResponseDto } from '../dto/response/create-video-response.dto';
 

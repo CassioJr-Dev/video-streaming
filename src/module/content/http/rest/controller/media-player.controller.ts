@@ -7,8 +7,8 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
-import { VideoNotFoundException } from '@src/core/exception/video-not-found.exception';
-import { MediaPlayerService } from '@src/core/service/media-player.service';
+import { VideoNotFoundException } from '@contentModule/core/exception/video-not-found.exception';
+import { MediaPlayerService } from '@contentModule/core/service/media-player.service';
 
 import { Request, Response } from 'express';
 import fs from 'node:fs';

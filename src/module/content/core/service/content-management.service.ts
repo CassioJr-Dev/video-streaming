@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { ContentRepository } from '@src/persistence/repository/content.repository';
-import { Movie } from '@src/persistence/entity/movie.entity';
-import { Video } from '@src/persistence/entity/video.entity';
-import { Thumbnail } from '@src/persistence/entity/thumbnail.entity';
-import { Content } from '@src/persistence/entity/content.entity';
+import { ContentRepository } from '@contentModule/persistence/repository/content.repository';
+import { Movie } from '@contentModule/persistence/entity/movie.entity';
+import { Video } from '@contentModule/persistence/entity/video.entity';
+import { Thumbnail } from '@contentModule/persistence/entity/thumbnail.entity';
+import { Content } from '@contentModule/persistence/entity/content.entity';
 import { ContentType } from '../enum/content-type.enum';
-import { ExternalMovieClient } from '@src/http/rest/client/external-movie-rating/external-movie-rating.client';
+import { ExternalMovieClient } from '@contentModule/http/rest/client/external-movie-rating/external-movie-rating.client';
 
 export interface CreateMovieData {
   title: string;

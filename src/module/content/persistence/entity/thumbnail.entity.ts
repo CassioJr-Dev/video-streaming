@@ -1,4 +1,4 @@
-import { DefaultEntity } from '@src/infra/typeorm/entity/default.entity';
+import { DefaultEntity } from '@contentModule/infra/typeorm/entity/default.entity';
 import { Column, Entity } from 'typeorm';
 
 @Entity({ name: 'Thumbnail' })

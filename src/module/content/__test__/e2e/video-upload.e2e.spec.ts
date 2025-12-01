@@ -1,9 +1,9 @@
 import { HttpStatus, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '@src/app.module';
-import { ContentRepository } from '@src/persistence/repository/content.repository';
-import { MovieRepository } from '@src/persistence/repository/movie.repository';
-import { VideoRepository } from '@src/persistence/repository/video.repository';
+import { ContentRepository } from '@contentModule/persistence/repository/content.repository';
+import { MovieRepository } from '@contentModule/persistence/repository/movie.repository';
+import { VideoRepository } from '@contentModule/persistence/repository/video.repository';
 import fs from 'node:fs';
 import request from 'supertest';
 import nock from 'nock';

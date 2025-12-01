@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { DefaultTypeOrmRepository } from '@src/infra/typeorm/repository/default-typeorm.repository';
+import { DefaultTypeOrmRepository } from '@contentModule/infra/typeorm/repository/default-typeorm.repository';
 import { Movie } from '../entity/movie.entity';
 
 @Injectable()

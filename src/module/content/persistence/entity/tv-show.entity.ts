@@ -1,4 +1,4 @@
-import { DefaultEntity } from '@src/infra/typeorm/entity/default.entity';
+import { DefaultEntity } from '@contentModule/infra/typeorm/entity/default.entity';
 import { Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { Episode } from './episode.entity';
 import { Thumbnail } from './thumbnail.entity';
